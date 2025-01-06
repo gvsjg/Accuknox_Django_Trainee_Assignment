@@ -1,0 +1,27 @@
+__pycache__/
+*.pyc
+*.swp
+db.sqlite3
+.DS_Store
+# Conda environments (adjust as needed)
+Django_Web_Dev/        # Specific environment in project directory
+*.egg-info
+.idea/
+.vscode/
+local_settings.py
+/static/
+/media/
+*.log
+.env
+# OS generated files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+*.bak
+*.orig
+*~
+*.tmp
+*.swp
+*.swo
+*.swn
+*.sza
