@@ -165,3 +165,72 @@ Why this proves the behavior:
 
 - After the exception, the User.objects.count() returns 0, demonstrating that the user creation was rolled back.
 - If signals did not run in the same transaction, the User object would remain in the database even though the signal handler failed.
+
+
+## ❓ Topic: Custom Classes in Python
+
+### Description: You are tasked with creating a Rectangle class with the following requirements:
+
+   1. An instance of the Rectangle class requires length:int and width:int to be initialized.
+   2. We can iterate over an instance of the Rectangle class 
+   3. When an instance of the Rectangle class is iterated over, we first get its length in the format: {'length': <VALUE_OF_LENGTH>} followed by the width {width: <VALUE_OF_WIDTH>}
+
+A: Regarding creating and using custom classes in Python, specifically within the context of a Django project
+
+1. **Creating the Rectangle Class [`accuknoxassignmentapp/models.py`](accuknoxassignmentapp/models.py):**
+
+- I've defined a Rectangle class inheriting from models.Model (essential for Django models).
+- It had attributes length and width as *models.IntegerField()*, which become database fields.
+- I've also implemented __iter__ to make instances iterable, yielding dictionaries of length and width.
+- Implemented __str__ (or __repr__ outside Django) for a user-friendly string representation of the objects.
+- Critically, we overrode the save() method to add validation (checking for integer types and positive values) before saving to the database.
+
+2. **Using the Rectangle Class:**
+
+- Django Shell (python [`manage.py`](manage.py) shell): We demonstrated how to create, retrieve, and iterate over Rectangle objects using the Django ORM (Object-Relational Mapper) within the interactive shell.
+- Separate Python Script [`test_rectangle.py`](test_rectangle.py): We showed how to use the Django models in a standalone script by setting up the Django environment using os.environ.setdefault() and django.setup(). This is useful for tasks outside the web request cycle. This is the output we get when run:
+
+```bash
+python test_rectangle.py 
+
+Rectangle (Length: 5, Width: 10)
+
+{'length': 5}
+
+{'width': 10}
+
+ValueError: Length and width must be positive.
+
+Exception: Length and width must be integers.
+
+ValueError: Length and width must be positive.
+
+Rectangle (Length: 5, Width: 10)
+
+{'length': 5}
+
+{'width': 10}
+```
+
+The output you provided shows the behavior of the [`test_rectangle.py`](test_rectangle.py) script, likely containing tests for your Rectangle model in Django. Here's a breakdown of the output:
+
+1. Successful Creation:
+
+Rectangle (Length: 5, Width: 10): This line indicates that a Rectangle object was successfully created with a length of 5 and a width of 10.
+
+{'length': 5}: This and the following line {'width': 10} demonstrate the iteration over the rectangle object using the __iter__ method defined in your model. Each iteration yields a dictionary with the key being "length" or "width" and the value being the corresponding value.
+
+2. Error Cases:
+
+ValueError: Length and width must be positive.: This error occurs because the script likely tries to create rectangles with negative values. Your model's save method raises this error if length or width are not positive.
+
+Exception: Length and width must be integers.: This error suggests the script attempts to create a rectangle with non-integer values for length or width. While the model's save method might not explicitly handle this case, Django's database backend probably raises this exception when trying to store the invalid data.
+
+3. Another Successful Creation:
+
+The output repeats the successful creation of a Rectangle object with length 5 and width 10, followed by the iterator output, demonstrating that the script continues after handling the errors.
+Overall, the output shows the script testing your Rectangle model's functionalities, including:
+
+Successful creation of rectangles with positive integer values.
+Handling of negative values for length and width with a ValueError.
+Implicit handling of non-integer values (likely by the database backend) with an Exception.
